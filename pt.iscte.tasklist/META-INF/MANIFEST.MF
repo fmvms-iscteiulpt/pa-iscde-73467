@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Demo
+Bundle-SymbolicName: pt.iscte.tasklist;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: pa.iscde.tasklist.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ pt.iscte.pidesco;bundle-version="0.1.0",
+ org.eclipse.swt;bundle-version="3.112.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: pt.iscte.pidesco.demo
+Bundle-ActivationPolicy: lazy
+Import-Package: pt.iscte.pidesco.extensibility
