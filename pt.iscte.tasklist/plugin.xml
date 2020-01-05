@@ -7,7 +7,7 @@
          name="Tasks"
          point="pt.iscte.pidesco.view">
       <view
-            class="pa.iscde.tasklist.TaskView"
+            class="pa.iscde.tasklist.internal.TaskListView"
             icon="task.png">
       </view>
    </extension>

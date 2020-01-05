@@ -1,4 +1,4 @@
-package pa.iscde.tasklist;
+package pa.iscde.tasklist.internal;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package pa.iscde.tasklist;
+package pa.iscde.tasklist.internal;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +28,7 @@ import pt.iscte.pidesco.extensibility.PidescoView;
 
 
 
-public class TaskView implements PidescoView {
+public class TaskListView implements PidescoView {
 
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
