@@ -4,6 +4,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+
+import pa.iscde.tasklist.service.TaskListService;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
 
@@ -16,6 +18,7 @@ public class TaskListActivator implements BundleActivator {
 	private static BundleContext context;
 	private JavaEditorServices editor;
 	private ProjectBrowserServices browser;
+	private TaskListService task;
 
 	public static BundleContext getContext() {
 		return context;
@@ -25,6 +28,8 @@ public class TaskListActivator implements BundleActivator {
 		TaskListActivator.context = bundleContext;
 		ServiceReference<ProjectBrowserServices> browserReference = context.getServiceReference(ProjectBrowserServices.class);
 		ServiceReference<JavaEditorServices> editorReference = context.getServiceReference(JavaEditorServices.class);
+		task = new TaskListServiceImpl();
+		context.registerService(TaskListService.class, task, null);
 		browser = context.getService(browserReference);
 		editor = context.getService(editorReference);
 		instance = this;
