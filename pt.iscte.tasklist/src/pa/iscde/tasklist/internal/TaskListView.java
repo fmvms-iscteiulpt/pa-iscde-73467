@@ -1,8 +1,10 @@
 package pa.iscde.tasklist.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -22,7 +24,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.BundleContext;
-
 
 import pt.iscte.pidesco.extensibility.PidescoView;
 
@@ -60,7 +61,21 @@ public class TaskListView implements PidescoView {
 		Button createClass = new Button(viewArea,SWT.CHECK);
 		Button createPackage = new Button(viewArea,SWT.CHECK);
 		createClass.setSelection(true);
+		
+		
+		Button pushButton = new Button(viewArea, SWT.PUSH);
+		pushButton.setLocation(50, 50);
+		pushButton.setText("Im a Push Button");
+		pushButton.pack();
+		pushButton.addListener(SWT.Selection, new Listener() {
+			
+			@Override
+			public void handleEvent(Event event) {
+				System.out.println("-----testing--------");
+			}
+		});
 	}
-	
+		
+		
 	
 }
