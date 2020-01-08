@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="pt.iscte.pidesco.task.list" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="pt.iscte.tasklist" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="pt.iscte.pidesco.task.list" id="textext" name="Test Extension"/>
+         <meta.schema plugin="pt.iscte.tasklist" id="taskextension" name="Task Extension"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="item"/>
+            <element ref="tasktag"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,16 +47,16 @@
       </complexType>
    </element>
 
-   <element name="item">
+   <element name="tasktag">
       <complexType>
-         <attribute name="name" type="string">
+         <attribute name="tagname" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
+         <attribute name="tagdescription" type="string">
             <annotation>
                <documentation>
                   
