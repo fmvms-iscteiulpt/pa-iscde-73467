@@ -2,6 +2,7 @@ package pa.iscde.tasklist.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,12 +26,17 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.BundleContext;
 
+
 import pt.iscte.pidesco.extensibility.PidescoView;
 
 
 
 public class TaskListView implements PidescoView {
 
+	private static TaskListView instance;
+	
+	private Map<String, Set<Task>> taskList = new HashMap<String, Set<Task>>();
+	
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
 		/*viewArea.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -76,6 +82,20 @@ public class TaskListView implements PidescoView {
 		});
 	}
 		
+	public static TaskListView getInstance() {
+		return instance;
+	}
+	
+	public Map<String, Set<Task>> getTaskList() {
+		return taskList;
+	}
+	
+	public void update() {
 		
+	}
+	
+	public void createTask() {
+		
+	}
 	
 }
