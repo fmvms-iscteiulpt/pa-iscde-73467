@@ -11,5 +11,12 @@
             icon="task.png">
       </view>
    </extension>
+   <extension
+         point="pt.iscte.tasklist.taskextension">
+      <tasktag
+            tagdescription="testedescription"
+            tagname="testename">
+      </tasktag>
+   </extension>
 
 </plugin>

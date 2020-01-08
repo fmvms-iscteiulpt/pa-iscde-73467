@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,11 +36,10 @@ import org.osgi.framework.BundleContext;
 import pt.iscte.pidesco.extensibility.PidescoView;
 
 
-
 public class TaskListView implements PidescoView {
 
 	private static TaskListView instance;
-	
+	private static final String EXT_POINT_TASK = "pt.iscte.tasklist.taskextension";
 	private Map<String, Set<Task>> taskList = new HashMap<String, Set<Task>>();
 	
 	@Override
@@ -77,9 +82,28 @@ public class TaskListView implements PidescoView {
 			
 			@Override
 			public void handleEvent(Event event) {
+			
+				IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
+				IExtensionPoint extensionPoint = extRegistry.getExtensionPoint(EXT_POINT_TASK);
+				IExtension[] extensions = extensionPoint.getExtensions();
+				for(IExtension e : extensions) {
+					IConfigurationElement[] confElements = e.getConfigurationElements();
+					for(IConfigurationElement c : confElements) {
+						String s = c.getAttribute("tagname");
+						String d = c.getAttribute("tagdescription");
+						System.out.println(s);
+						System.out.println(d);
+					}
+				}
 				System.out.println("-----testing--------");
+				
 			}
 		});
+		
+		
+		
+		
+		
 	}
 		
 	public static TaskListView getInstance() {
