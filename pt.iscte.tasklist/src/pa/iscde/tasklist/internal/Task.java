@@ -3,7 +3,7 @@ package pa.iscde.tasklist.internal;
 /**
  * Object that represents a Task
  * 
- * @author Francisco Silva
+ * @author Francisco Silva.
  *
  */
 
