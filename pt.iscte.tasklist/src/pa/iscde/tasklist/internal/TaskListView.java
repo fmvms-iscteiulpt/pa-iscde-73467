@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -121,29 +122,23 @@ public class TaskListView implements PidescoView {
 //		Button fixme = new Button(composite0, SWT.CHECK);
 //		fixme.setText(" FIXME  ");
 //
-//		Button xxx = new Button(composite0, SWT.CHECK);
+//		RadioButton xxx = new Button(composite0, SWT.CHECK);
 //		xxx.setText(" XXX");
 
-		tags.add("TODO");
-		tags.add("FIXME");
-		tags.add("XXX");
-		ArrayList<Button> listbuttons = new ArrayList<Button>();
-		for(String t : tags) {
-			Button b = new Button(composite0, SWT.CHECK);
-			listbuttons.add(b);
-			b.setText(t);
-		}
 		
 		
-		for(int i =0; i<listbuttons.size();i++) {
-			for(int j=0; j<listbuttons.size();j++) {
-				if (i==j) {
-					listbuttons.get(i).setSelection(true);
-				} else {
-					listbuttons.get(j).setSelection(false);
-				}
-			}
-		}
+		
+//		for(int i =0; i<listbuttons.size();i++) {
+//			for(int j=0; j<listbuttons.size();j++) {
+//				if (i==j) {
+//					listbuttons.get(i).setSelection(true);
+//				} else {
+//					listbuttons.get(j).setSelection(false);
+//				}
+//			}
+//		}
+		
+		
 		
 		
 //		listbuttons.get(0).addSelectionListener(new SelectionAdapter() {
@@ -178,15 +173,35 @@ public class TaskListView implements PidescoView {
 		for(IExtension e : extensions) {
 			IConfigurationElement[] confElements = e.getConfigurationElements();
 			for(IConfigurationElement c : confElements) {
-				String s = c.getAttribute("tagname");
-				Button tagextension = new Button(composite0, SWT.CHECK);
-				tagextension.setText(s);
+				tags.add(c.getAttribute("tagname"));
+//				String s = c.getAttribute("tagname");
+//				Button tagextension = new Button(composite0, SWT.CHECK);
+//				tagextension.setText(s);
 				
 			}
 			
 		}
 		
+		SelectionListener selectionListener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Button button = ((Button) e.widget);
+				if(button.getSelection()) {
+					button.setSelection(true); 
+				} else { button.setSelection(false);
+				}
+			}
+		};
 		
+		tags.add("TODO");
+		tags.add("FIXME");
+		tags.add("XXX");
+		ArrayList<Button> listbuttons = new ArrayList<Button>();
+		for(String t : tags) {
+			Button b = new Button(composite0, SWT.CHECK);
+			listbuttons.add(b);
+			b.setText(t);
+			b.addSelectionListener(selectionListener);
+		}
 		
 		
 		
