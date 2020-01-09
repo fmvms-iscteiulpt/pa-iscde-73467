@@ -51,7 +51,8 @@ public class TaskListView implements PidescoView {
 	private static final String EXT_POINT_TASK = "pt.iscte.tasklist.taskextension";
 	private ArrayList<Task> tasklist = new ArrayList<Task>();
 	private Table table;
-	String[] tags =  {"TODO", "FIXME", "XXX"};
+	private ArrayList<String> tags = new ArrayList<String>();
+	
 	
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
@@ -113,41 +114,61 @@ public class TaskListView implements PidescoView {
 		composite0.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
 		
 		
-		Button todo = new Button(composite0, SWT.CHECK);
-		todo.setText(" TODO  ");
-		todo.setSelection(true);
-		
-		Button fixme = new Button(composite0, SWT.CHECK);
-		fixme.setText(" FIXME  ");
+//		Button todo = new Button(composite0, SWT.CHECK);
+//		todo.setText(" TODO  ");
+//		todo.setSelection(true);
+//		
+//		Button fixme = new Button(composite0, SWT.CHECK);
+//		fixme.setText(" FIXME  ");
+//
+//		Button xxx = new Button(composite0, SWT.CHECK);
+//		xxx.setText(" XXX");
 
-		Button xxx = new Button(composite0, SWT.CHECK);
-		xxx.setText(" XXX");
-
+		tags.add("TODO");
+		tags.add("FIXME");
+		tags.add("XXX");
+		ArrayList<Button> listbuttons = new ArrayList<Button>();
+		for(String t : tags) {
+			Button b = new Button(composite0, SWT.CHECK);
+			listbuttons.add(b);
+			b.setText(t);
+		}
 		
 		
-		todo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				todo.setSelection(true);
-				fixme.setSelection(false);
-				xxx.setSelection(false);
+		for(int i =0; i<listbuttons.size();i++) {
+			for(int j=0; j<listbuttons.size();j++) {
+				if (i==j) {
+					listbuttons.get(i).setSelection(true);
+				} else {
+					listbuttons.get(j).setSelection(false);
+				}
 			}
-		});
+		}
 		
-		fixme.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				todo.setSelection(false);
-				fixme.setSelection(true);
-				xxx.setSelection(false);
-			}
-		});
 		
-		xxx.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				todo.setSelection(false);
-				fixme.setSelection(false);
-				xxx.setSelection(true);
-			}
-		});
+//		listbuttons.get(0).addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				listbuttons.get(0).setSelection(true);
+//				listbuttons.get(1).setSelection(false);
+//				listbuttons.get(2).setSelection(false);
+//			}
+//		});
+//		
+//		fixme.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				todo.setSelection(false);
+//				fixme.setSelection(true);
+//				xxx.setSelection(false);
+//			}
+//		});
+//		
+//		xxx.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				todo.setSelection(false);
+//				fixme.setSelection(false);
+//				xxx.setSelection(true);
+//			}
+//		});
 		
 		
 		
@@ -162,6 +183,7 @@ public class TaskListView implements PidescoView {
 				tagextension.setText(s);
 				
 			}
+			
 		}
 		
 		
@@ -187,9 +209,11 @@ public class TaskListView implements PidescoView {
 			public void handleEvent(Event event) {
 				
 				String tag = new String("NA");
-				if(fixme.getSelection()) tag = fixme.getText();
-				if(todo.getSelection()) tag = todo.getText();
-				if(xxx.getSelection()) tag = xxx.getText();
+				for (Button b : listbuttons) {
+					if(b.getSelection()) tag = b.getText();
+					
+				}
+				
 				
 				Task task = new Task(tag,nameClass.getText(),nameLocation.getText());
 				tasklist.add(task);
