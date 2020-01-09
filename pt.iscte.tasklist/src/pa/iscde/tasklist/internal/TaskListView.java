@@ -159,6 +159,19 @@ public class TaskListView implements PidescoView {
 		
 		
 		
+		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
+		IExtensionPoint extensionPoint = extRegistry.getExtensionPoint(EXT_POINT_TASK);
+		IExtension[] extensions = extensionPoint.getExtensions();
+		for(IExtension e : extensions) {
+			IConfigurationElement[] confElements = e.getConfigurationElements();
+			for(IConfigurationElement c : confElements) {
+				String s = c.getAttribute("tagname");
+				Button tagextension = new Button(composite0, SWT.CHECK);
+				tagextension.setText(s);
+				
+			}
+		}
+		
 		
 		
 		
@@ -174,7 +187,7 @@ public class TaskListView implements PidescoView {
 		
 		Button pushButton = new Button(viewArea, SWT.PUSH);
 		pushButton.setLocation(50, 50);
-		pushButton.setText("Im a Push Button");
+		pushButton.setText("Create new Task!");
 		pushButton.pack();
 		pushButton.addListener(SWT.Selection, new Listener() {
 			
