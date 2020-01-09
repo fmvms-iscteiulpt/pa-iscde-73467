@@ -1,23 +1,27 @@
 package pa.iscde.tasklist.internal;
 
+/**
+ * Object that represents a Task
+ * 
+ * @author Francisco Silva
+ *
+ */
+
 public class Task {
 
 	private final String tag;
-	private final String description;
 	private final String location;
-	
+	private final String description;
 	
 	/**
-	 * Tag constructor
+	 * Task constructor
 	 * 
-	 * @param tag         {@link String}
+	 * @param tag         String
 	 * @param description String
-	 * @param line        Integer
-	 * @param path        String
+	 * @param location    String
 	 */
 	
 	public Task(String tag, String description, String location) {
-		
 		this.tag = tag;
 		this.description = description;
 		this.location = location;
@@ -26,21 +30,12 @@ public class Task {
 	/**
 	 * Getter for Tag
 	 * 
-	 * @return {@link String}
+	 * @return String
 	 */
 	public String getTag() {
 		return tag;
 	}
 
-	/**
-	 * Getter for Description
-	 * 
-	 * @return String
-	 */
-	public String getDescription() {
-		return description;
-	}
-	
 	/**
 	 * Getter for Location
 	 * 
@@ -50,8 +45,15 @@ public class Task {
 		return location;
 	}
 	
-
-
+	/**
+	 * Getter for Description
+	 * 
+	 * @return String
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
 	@Override
 	public String toString() {
 		return "Task [tag=" + tag + ", description=" + description + ", location= " + location + "]";
