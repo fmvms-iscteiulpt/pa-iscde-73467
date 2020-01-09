@@ -10,9 +10,6 @@ import pt.iscte.pidesco.extensibility.PidescoServices;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
 
-
-
-
 public class TaskListActivator implements BundleActivator {
 
 	private static TaskListActivator instance;
@@ -26,6 +23,7 @@ public class TaskListActivator implements BundleActivator {
 		return context;
 	}
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		TaskListActivator.context = bundleContext;
 		ServiceReference<ProjectBrowserServices> browserReference = context.getServiceReference(ProjectBrowserServices.class);
@@ -38,6 +36,7 @@ public class TaskListActivator implements BundleActivator {
 		instance = this;
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		instance = null;
 		TaskListActivator.context = null;
@@ -47,14 +46,26 @@ public class TaskListActivator implements BundleActivator {
 		return instance;
 	}
 	
+	/**
+	 * Getter for browser Service
+	 * @return ProjectBrowserServices instance
+	 */
 	public ProjectBrowserServices getBrowser() {
 		return browser;
 	}
 
+	/**
+	 * Getter for editor Service
+	 * @return JavaEditorServices instance
+	 */
 	public JavaEditorServices getEditor() {
 		return editor;
 	}
 
+	/**
+	 * Getter for pidesco Service
+	 * @return PidescoServices instance
+	 */
 	public PidescoServices getPidesco() {
 		return pidesco;
 	}
