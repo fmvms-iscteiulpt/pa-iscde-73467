@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -48,7 +49,7 @@ public class TaskListView implements PidescoView {
 
 	private static TaskListView instance;
 	private static final String EXT_POINT_TASK = "pt.iscte.tasklist.taskextension";
-	private Map<String, Set<Task>> taskList = new HashMap<String, Set<Task>>();
+	private ArrayList<Task> tasklist = new ArrayList<Task>();
 	private Table table;
 	String[] tags =  {"TODO", "FIXME", "XXX"};
 	
@@ -84,26 +85,16 @@ public class TaskListView implements PidescoView {
 
 		
 		viewArea.setLayout(new RowLayout(SWT.VERTICAL));
-				
-		//field package
-		Label labelPackage = new Label(viewArea, SWT.ABORT);		
-		labelPackage.setText("Task name: ");	
-		
-		Text namePackage = new Text(viewArea,SWT.BORDER);		
-		namePackage.setEditable(false);
-		namePackage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
-		namePackage.setToolTipText("Write your task name");
 
 		
 		//field description
 		Label labelName = new Label(viewArea, SWT.ABORT);		
-		labelName.setText("Give your task a description: ");	
+		labelName.setText("Give a description to your task: ");	
 		
 		Text nameClass = new Text(viewArea,SWT.BORDER);		
 		nameClass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
 		nameClass.setToolTipText("Write your task description");
 		nameClass.setEditable(true);
-		namePackage.setEditable(true);
 		
 		Label labelLocation = new Label(viewArea, SWT.ABORT);
 		labelLocation.setText("Where is your task located?");
@@ -132,6 +123,7 @@ public class TaskListView implements PidescoView {
 		Button xxx = new Button(composite0, SWT.CHECK);
 		xxx.setText(" XXX");
 
+		
 		
 		todo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -194,6 +186,24 @@ public class TaskListView implements PidescoView {
 			@Override
 			public void handleEvent(Event event) {
 			
+				Task task = new Task(fixme.getText(),nameClass.getText(),nameLocation.getText());
+				tasklist.add(task);
+				
+				table.removeAll();
+				table.redraw();
+				
+				for (Task t : tasklist) {
+						TableItem item = new TableItem(table, SWT.NONE);
+						item.setText(0, t.getTag());
+						item.setText(1, t.getDescription());
+						item.setText(2, t.getLocation());
+				}
+				
+				for (int i = 0; i < 3; i++) {
+					table.getColumn(i).pack();
+				}
+				
+				
 				IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
 				IExtensionPoint extensionPoint = extRegistry.getExtensionPoint(EXT_POINT_TASK);
 				IExtension[] extensions = extensionPoint.getExtensions();
@@ -218,28 +228,36 @@ public class TaskListView implements PidescoView {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 200;
 		table.setLayoutData(data);
-		String[] titles = { "Tag", "Description", "Resource", "Path", "Location" };
+		String[] titles = { "Tag", "Description", "Location" };
 		for (int i = 0; i < titles.length; i++) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(titles[i]);
 		}
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText("Offset");
-		column.setResizable(false);
 		for (int i = 0; i < titles.length; i++) {
 			table.getColumn(i).pack();
 		}
 		
 	}
 		
-	
+	private void saveDataInTable(Map<String, Set<Task>> map) {
+		for (Set<Task> s : map.values())
+			for (Task t : s) {
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(0, t.getTag().toString());
+				item.setText(1, t.getDescription());
+				item.setText(3, t.getLocation());
+			}
+		for (int i = 0; i < 5; i++) {
+			table.getColumn(i).pack();
+		}
+	}
 	
 	public static TaskListView getInstance() {
 		return instance;
 	}
 	
-	public Map<String, Set<Task>> getTaskList() {
-		return taskList;
+	public ArrayList<Task> getTaskList() {
+		return tasklist;
 	}
 	
 	public void update() {

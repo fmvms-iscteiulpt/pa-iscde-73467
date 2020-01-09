@@ -4,8 +4,8 @@ public class Task {
 
 	private final String tag;
 	private final String description;
-	private final int line;
-	private final String path;
+	private final String location;
+	
 	
 	/**
 	 * Tag constructor
@@ -16,11 +16,11 @@ public class Task {
 	 * @param path        String
 	 */
 	
-	public Task(String tag, String description, int line, String path) {
+	public Task(String tag, String description, String location) {
+		
 		this.tag = tag;
 		this.description = description;
-		this.line = line;
-		this.path = path;
+		this.location = location;
 	}
 
 	/**
@@ -41,30 +41,20 @@ public class Task {
 		return description;
 	}
 	
-
 	/**
-	 * Getter for Path
+	 * Getter for Location
 	 * 
 	 * @return String
 	 */
-	public String getPath() {
-		return path;
+	public String getLocation() {
+		return location;
 	}
-
-	/**
-	 * Getter for Line
-	 * 
-	 * @return Integer
-	 */
-	public int getLine() {
-		return line;
-	}
+	
 
 
 	@Override
 	public String toString() {
-		return "Task [tag=" + tag + ", description=" + description + ", path=" + path
-				+ ", line=" + line + "]";
+		return "Task [tag=" + tag + ", description=" + description + ", location= " + location + "]";
 	}
 }
 

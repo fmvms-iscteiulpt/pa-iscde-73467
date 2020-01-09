@@ -1,5 +1,6 @@
 package pa.iscde.tasklist.internal;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -15,12 +16,9 @@ public class TaskListServiceImpl implements TaskListService {
 	}
 
 	@Override
-	public Set<Task> getTasks() {
-		Set<Task> returnSet = new HashSet<Task>();
-		Map<String, Set<Task>> tasksMap = TaskListView.getInstance().getTaskList();
-		for(Set<Task> set : tasksMap.values())
-			returnSet.addAll(set);
-		return returnSet;
+	public ArrayList<Task> getTasks() {
+		ArrayList<Task> tasksMap = TaskListView.getInstance().getTaskList();		
+		return tasksMap;
 	}
 
 	@Override

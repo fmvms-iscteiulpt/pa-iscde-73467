@@ -1,5 +1,6 @@
 package pa.iscde.tasklist.service;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import pa.iscde.tasklist.internal.Task;
@@ -19,7 +20,7 @@ public interface TaskListService {
 	 * @return Set of {@link Task} Objects
 	 */
 		
-	Set<Task> getTasks();
+	ArrayList<Task> getTasks();
 	
 	
 	/**
