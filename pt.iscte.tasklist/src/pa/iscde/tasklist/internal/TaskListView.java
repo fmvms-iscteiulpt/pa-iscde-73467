@@ -50,9 +50,12 @@ public class TaskListView implements PidescoView {
 
 	private static TaskListView instance;
 	private static final String EXT_POINT_TASK = "pt.iscte.tasklist.taskextension";
+	//	arraylist containing the tasks
 	private ArrayList<Task> tasklist = new ArrayList<Task>();
 	private Table table;
+	//	arraylist containing the tags names 
 	private ArrayList<String> tags = new ArrayList<String>();
+	private String[] defaultTags= {"TODO", "FIXME", "XXX"};
 	
 	
 	@Override
@@ -65,8 +68,6 @@ public class TaskListView implements PidescoView {
 
 			}
 
-			
-
 			@Override
 			public void fileClosed(File file) {
 
@@ -78,110 +79,47 @@ public class TaskListView implements PidescoView {
 			}
 		});
 		
-		/*viewArea.setLayout(new RowLayout(SWT.HORIZONTAL));
-		Label label = new Label(viewArea, SWT.NONE);
-		label.setImage(imageMap.get("smiley.png"));
-		Text text = new Text(viewArea, SWT.BORDER);
-		text.setText("hello world");
-		*/
-
-		
 		viewArea.setLayout(new RowLayout(SWT.VERTICAL));
-
 		
-		//field description
+		// task description
 		Label labelName = new Label(viewArea, SWT.ABORT);		
 		labelName.setText("Give a description to your task: ");	
-		
+
 		Text nameClass = new Text(viewArea,SWT.BORDER);		
 		nameClass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
 		nameClass.setToolTipText("Write your task description");
 		nameClass.setEditable(true);
-		
+
+		// task location
 		Label labelLocation = new Label(viewArea, SWT.ABORT);
 		labelLocation.setText("Where is your task located?");
+		
 		Text nameLocation = new Text(viewArea,SWT.BORDER);		
 		nameLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
 		nameLocation.setToolTipText("Write your task location");
 		nameLocation.setEditable(true);
 		
-		
-		
+		// task tag 
 		Label tagName = new Label(viewArea, SWT.ABORT);		
-		tagName.setText("Choose your task tag: ");	
-		///////TAGS
-		Composite composite0 = new Composite(viewArea, SWT.NONE);
-		composite0.setLayout(new GridLayout(4, false));
-		composite0.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
-		
-		
-//		Button todo = new Button(composite0, SWT.CHECK);
-//		todo.setText(" TODO  ");
-//		todo.setSelection(true);
-//		
-//		Button fixme = new Button(composite0, SWT.CHECK);
-//		fixme.setText(" FIXME  ");
-//
-//		RadioButton xxx = new Button(composite0, SWT.CHECK);
-//		xxx.setText(" XXX");
+		tagName.setText("Please choose one tag for your task: ");	
 
-		
-		
-		
-//		for(int i =0; i<listbuttons.size();i++) {
-//			for(int j=0; j<listbuttons.size();j++) {
-//				if (i==j) {
-//					listbuttons.get(i).setSelection(true);
-//				} else {
-//					listbuttons.get(j).setSelection(false);
-//				}
-//			}
-//		}
-		
-		
-		
-		
-//		listbuttons.get(0).addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				listbuttons.get(0).setSelection(true);
-//				listbuttons.get(1).setSelection(false);
-//				listbuttons.get(2).setSelection(false);
-//			}
-//		});
-//		
-//		fixme.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				todo.setSelection(false);
-//				fixme.setSelection(true);
-//				xxx.setSelection(false);
-//			}
-//		});
-//		
-//		xxx.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				todo.setSelection(false);
-//				fixme.setSelection(false);
-//				xxx.setSelection(true);
-//			}
-//		});
-		
-		
-		
+		Composite comp = new Composite(viewArea, SWT.NONE);
+		comp.setLayout(new GridLayout(4, false));
+		comp.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
+			
+		// implementing extensions
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = extRegistry.getExtensionPoint(EXT_POINT_TASK);
 		IExtension[] extensions = extensionPoint.getExtensions();
 		for(IExtension e : extensions) {
 			IConfigurationElement[] confElements = e.getConfigurationElements();
 			for(IConfigurationElement c : confElements) {
-				tags.add(c.getAttribute("tagname"));
-//				String s = c.getAttribute("tagname");
-//				Button tagextension = new Button(composite0, SWT.CHECK);
-//				tagextension.setText(s);
-				
+				//	add a new tag to the tags arraylist with the name given in the extension argument "tagname"
+				tags.add(c.getAttribute("tagname"));				
 			}
-			
 		}
 		
+		// handle the tags button selection
 		SelectionListener selectionListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Button button = ((Button) e.widget);
@@ -191,29 +129,23 @@ public class TaskListView implements PidescoView {
 				}
 			}
 		};
-		
-		tags.add("TODO");
-		tags.add("FIXME");
-		tags.add("XXX");
+
+		//	add the default tags to the array list tags
+		for (String s : defaultTags) {
+			tags.add(s);
+		}
+
+		//	create the buttons for the tags in the array list tags
+		//	save the buttons created in an buttons array list: listbuttons 
 		ArrayList<Button> listbuttons = new ArrayList<Button>();
 		for(String t : tags) {
-			Button b = new Button(composite0, SWT.CHECK);
+			Button b = new Button(comp, SWT.CHECK);
 			listbuttons.add(b);
 			b.setText(t);
 			b.addSelectionListener(selectionListener);
 		}
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		//	handle the button to create a task
 		Button pushButton = new Button(viewArea, SWT.PUSH);
 		pushButton.setLocation(50, 50);
 		pushButton.setText("Create new Task!");
@@ -221,47 +153,32 @@ public class TaskListView implements PidescoView {
 		pushButton.addListener(SWT.Selection, new Listener() {
 			
 			@Override
-			public void handleEvent(Event event) {
+			public void handleEvent(Event event) {	
 				
+				//	if no tag choosen it will be NA
+				//	when the button is pressed it will look for the tag choosen, if more than one it will choose the one to the right
 				String tag = new String("NA");
 				for (Button b : listbuttons) {
 					if(b.getSelection()) tag = b.getText();
-					
 				}
 				
-				
+				// create the task with the arguments of the view
 				Task task = new Task(tag,nameClass.getText(),nameLocation.getText());
 				tasklist.add(task);
-				
+
 				table.removeAll();
 				table.redraw();
-				
+	
+				//	populate the table with the new task
 				for (Task t : tasklist) {
 						TableItem item = new TableItem(table, SWT.NONE);
 						item.setText(0, t.getTag());
 						item.setText(1, t.getDescription());
 						item.setText(2, t.getLocation());
-				}
-				
+				}			
 				for (int i = 0; i < 3; i++) {
 					table.getColumn(i).pack();
 				}
-				
-				
-				IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
-				IExtensionPoint extensionPoint = extRegistry.getExtensionPoint(EXT_POINT_TASK);
-				IExtension[] extensions = extensionPoint.getExtensions();
-				for(IExtension e : extensions) {
-					IConfigurationElement[] confElements = e.getConfigurationElements();
-					for(IConfigurationElement c : confElements) {
-						String s = c.getAttribute("tagname");
-						String d = c.getAttribute("tagdescription");
-						System.out.println(s);
-						System.out.println(d);
-					}
-				}
-				System.out.println("-----testing--------");
-				
 			}
 		});
 		
@@ -282,19 +199,6 @@ public class TaskListView implements PidescoView {
 		}
 		
 	}
-		
-	private void saveDataInTable(Map<String, Set<Task>> map) {
-		for (Set<Task> s : map.values())
-			for (Task t : s) {
-				TableItem item = new TableItem(table, SWT.NONE);
-				item.setText(0, t.getTag().toString());
-				item.setText(1, t.getDescription());
-				item.setText(3, t.getLocation());
-			}
-		for (int i = 0; i < 5; i++) {
-			table.getColumn(i).pack();
-		}
-	}
 	
 	public static TaskListView getInstance() {
 		return instance;
@@ -302,14 +206,6 @@ public class TaskListView implements PidescoView {
 	
 	public ArrayList<Task> getTaskList() {
 		return tasklist;
-	}
-	
-	public void update() {
-		
-	}
-	
-	public void createTask() {
-		
 	}
 	
 }
