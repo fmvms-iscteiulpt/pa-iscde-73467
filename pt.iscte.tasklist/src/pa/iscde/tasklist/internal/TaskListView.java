@@ -185,8 +185,13 @@ public class TaskListView implements PidescoView {
 			
 			@Override
 			public void handleEvent(Event event) {
-			
-				Task task = new Task(fixme.getText(),nameClass.getText(),nameLocation.getText());
+				
+				String tag = new String("NA");
+				if(fixme.getSelection()) tag = fixme.getText();
+				if(todo.getSelection()) tag = todo.getText();
+				if(xxx.getSelection()) tag = xxx.getText();
+				
+				Task task = new Task(tag,nameClass.getText(),nameLocation.getText());
 				tasklist.add(task);
 				
 				table.removeAll();
