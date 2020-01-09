@@ -6,7 +6,7 @@
          <meta.schema plugin="pt.iscte.tasklist" id="taskextension" name="Task Extension"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         Simply add the extension and then choose a &quot;tagname&quot; for the new tag you want to add to the TaskListView or Tasks (View).
       </documentation>
    </annotation>
 

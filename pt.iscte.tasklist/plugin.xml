@@ -15,7 +15,7 @@
          point="pt.iscte.tasklist.taskextension">
       <tasktag
             tagdescription="testedescription"
-            tagname="testename">
+            tagname="URGENTE">
       </tasktag>
    </extension>
 
