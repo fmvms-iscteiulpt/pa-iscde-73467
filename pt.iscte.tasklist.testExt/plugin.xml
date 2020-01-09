@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="testview"
+         name="Task Extension Test"
+         point="pt.iscte.pidesco.view">
+      <view
+            class="pt.iscte.tasklist.testExt.TaskTestView"
+            icon="smiley.png">
+      </view>
+   </extension>
+   <extension
+         point="pt.iscte.tasklist.taskextension">
+      <tasktag
+            tagdescription="Para destacar uma tarefa com prioridade alta"
+            tagname="Train Code">
+      </tasktag>
+   </extension>
+
+</plugin>

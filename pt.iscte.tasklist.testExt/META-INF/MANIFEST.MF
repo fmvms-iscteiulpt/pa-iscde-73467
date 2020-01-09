@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: TestExt
+Bundle-SymbolicName: pt.iscte.tasklist.testExt;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: pt.iscte.tasklist.testExt
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: pt.iscte.pidesco;bundle-version="0.1.0",
+ org.eclipse.swt;bundle-version="3.112.0",
+ pt.iscte.tasklist;bundle-version="1.0.0"
+Import-Package: org.osgi.framework
