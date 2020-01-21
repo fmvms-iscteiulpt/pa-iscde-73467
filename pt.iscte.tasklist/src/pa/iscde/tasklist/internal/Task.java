@@ -9,53 +9,68 @@ package pa.iscde.tasklist.internal;
 
 public class Task {
 
-	private final String tag;
-	private final String location;
-	private final String description;
-	
+	private String token;
+	private String description;
+	private String project;
+	private String file;
+	private int line;
+
 	/**
-	 * Task constructor
-	 * 
-	 * @param tag         String
-	 * @param description String
-	 * @param location    String
+	 *  Task Object
+	 *  
+	 * @param token
+	 * @param description
+	 * @param project
+	 * @param file
+	 * @param line
 	 */
-	public Task(String tag, String description, String location) {
-		this.tag = tag;
+	public Task(String token, String description, String project, String file, int line) {
+
+		this.token = token;
 		this.description = description;
-		this.location = location;
+		this.project = project;
+		this.file = file;
+		this.line = line;
 	}
 
 	/**
-	 * Getter for Tag
-	 * 
-	 * @return String
-	 */
-	public String getTag() {
-		return tag;
-	}
-	
-	/**
-	 * Getter for Description
-	 * 
-	 * @return String
+	 * Returns the task description
+	 * @return String description
 	 */
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
-	 * Getter for Location
-	 * 
-	 * @return String
+	 * the java file where the task token were found
+	 * @return String file
 	 */
-	public String getLocation() {
-		return location;
+	public String getFile() {
+		return file;
 	}
-	
-	@Override
-	public String toString() {
-		return "Task [tag=" + tag + ", description=" + description + ", location= " + location + "]";
+
+	/**
+	 * the line where the task token were found
+	 * @return Integer line
+	 */
+	public int getLine() {
+		return line;
+	}
+
+	/**
+	 * it was supposed to return the project name
+	 * @return String project
+	 */
+	public String getProject() {
+		return project;
+	}
+
+	/**
+	 * Get the token used to describe a task
+	 * @return String token
+	 */
+	public String getToken() {
+		return token;
 	}
 }
 

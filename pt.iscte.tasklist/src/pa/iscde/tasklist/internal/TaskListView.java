@@ -1,7 +1,11 @@
 package pa.iscde.tasklist.internal;
 
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,9 +45,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
+import pt.iscte.pidesco.projectbrowser.model.SourceElement;
+import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserListener;
+import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
 
 
 public class TaskListView implements PidescoView {
@@ -52,11 +60,13 @@ public class TaskListView implements PidescoView {
 	private static final String EXT_POINT_TASK = "pt.iscte.tasklist.taskextension";
 	//	arraylist containing the tasks
 	private ArrayList<Task> tasklist = new ArrayList<Task>();
-	private Table table;
+	Table table;
 	//	arraylist containing the tags names 
 	private ArrayList<String> tags = new ArrayList<String>();
 	private String[] defaultTags= {"TODO", "FIXME", "XXX"};
-	
+	private String root;
+	private Map<String, Set<Task>> taskList = new HashMap<String, Set<Task>>();
+
 	
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
@@ -163,24 +173,60 @@ public class TaskListView implements PidescoView {
 				}
 				
 				// create the task with the arguments of the view
-				Task task = new Task(tag,nameClass.getText(),nameLocation.getText());
-				tasklist.add(task);
-
-				table.removeAll();
-				table.redraw();
-	
-				//	populate the table with the new task
-				for (Task t : tasklist) {
-						TableItem item = new TableItem(table, SWT.NONE);
-						item.setText(0, t.getTag());
-						item.setText(1, t.getDescription());
-						item.setText(2, t.getLocation());
-				}			
-				for (int i = 0; i < 3; i++) {
-					table.getColumn(i).pack();
-				}
+//				Task task = new Task(tag,nameClass.getText(),nameLocation.getText());
+//				tasklist.add(task);
+//
+//				table.removeAll();
+//				table.redraw();
+//	
+//				//	populate the table with the new task
+//				for (Task t : tasklist) {
+//						TableItem item = new TableItem(table, SWT.NONE);
+//						item.setText(0, t.getTag());
+//						item.setText(1, t.getDescription());
+//						item.setText(2, t.getLocation());
+//				}			
+//				for (int i = 0; i < 3; i++) {
+//					table.getColumn(i).pack();
+//				}
+				System.out.println(root);
 			}
 		});
+		
+//		viewArea.setLayout(new GridLayout());
+//		table = new Table(viewArea, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
+//		table.setLinesVisible(true);
+//		table.setHeaderVisible(true);
+//		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+//		data.heightHint = 200;
+//		table.setLayoutData(data);
+//		String[] titles = { "Tag", "Description", "Location" };
+//		for (int i = 0; i < titles.length; i++) {
+//			TableColumn column = new TableColumn(table, SWT.NONE);
+//			column.setText(titles[i]);
+//		}
+//		for (int i = 0; i < titles.length; i++) {
+//			table.getColumn(i).pack();
+//		}
+		
+		/////started doing 2 development
+		
+		BundleContext context = TaskListActivator.getContext();
+		ServiceReference<ProjectBrowserServices> serviceReference = context
+				.getServiceReference(ProjectBrowserServices.class);
+		ProjectBrowserServices projServ = context.getService(serviceReference);
+
+		projServ.addListener(new ProjectBrowserListener.Adapter() {
+			@Override
+			public void doubleClick(SourceElement element) {
+				new Label(viewArea, SWT.NONE).setText(element.getName());
+				viewArea.layout();
+			}
+		});
+		
+		
+	
+		
 		
 		viewArea.setLayout(new GridLayout());
 		table = new Table(viewArea, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
@@ -189,16 +235,113 @@ public class TaskListView implements PidescoView {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 200;
 		table.setLayoutData(data);
-		String[] titles = { "Tag", "Description", "Location" };
+		
+		
+		String[] titles = { "Description", "Project", "File", "Line" };
 		for (int i = 0; i < titles.length; i++) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(titles[i]);
 		}
+
 		for (int i = 0; i < titles.length; i++) {
 			table.getColumn(i).pack();
 		}
 		
+		root = projServ.getRootPackage().getFile().getPath();
+		fileReader(new File(root));
+		
 	}
+	
+	
+	
+	private void fileReader(File file) {
+		for (File f : file.listFiles(new FileFilter() {
+			
+			@Override
+			public boolean accept(File pathname) {
+				if (pathname.isDirectory())
+					return true;
+				String name = pathname.getName();
+				int index = name.lastIndexOf(".");
+				if (index == -1)
+					return false;
+				return name.substring(index + 1).equals("java");
+			}
+		})) {
+			if (f.isFile()) {
+				updateTableView(f);
+			}else {
+				fileReader(f);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Updates the Java Tasks Table view
+	 * 
+	 * @param file
+	 */
+	public void updateTableView(File file) {
+
+		TaskManager taskManager = new TaskManager();
+		
+		List<String> tokens = new ArrayList<String>();
+		tokens.add("TODO");
+		tokens.add("FIXME");
+		tokens.add("BUG");
+
+		try (BufferedReader buffer = new BufferedReader(new FileReader(file))) {
+			String line;
+			StringBuilder sb = new StringBuilder();
+
+			System.out.println(file.getName());
+
+			int count = 0;
+			while ((line = buffer.readLine()) != null) {
+
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				count++;
+			}
+		
+			String everything = sb.toString();
+			taskManager.findComments(tokens, file, everything);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		taskList.put(file.getPath(), taskManager.getTasks());
+		table.removeAll();
+		saveDataInTable(taskList);
+		table.redraw();
+
+	}
+
+	/**
+	 * Stores the Tasks on the table view
+	 * 
+	 * @param map of Tasks
+	 */
+	private void saveDataInTable(Map<String, Set<Task>> map) {
+
+		for (Set<Task> s : map.values())
+			for (Task t : s) {
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(0, t.getToken().toString() + t.getDescription());
+				item.setText(1, "Project: " + t.getProject());
+				item.setText(2, t.getFile());
+				item.setText(3, "Line " + t.getLine());
+			}
+
+		for (TableColumn column : table.getColumns()) {
+			column.pack();
+		}
+	}
+
+	
+	
 	
 	public static TaskListView getInstance() {
 		return instance;
