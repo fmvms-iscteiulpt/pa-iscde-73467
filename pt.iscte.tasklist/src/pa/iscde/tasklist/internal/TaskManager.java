@@ -68,6 +68,9 @@ public class TaskManager {
 	 * https://stackoverflow.com/questions/1657066/java-regular-expression-finding-comments-in-code/1740692
 	 */
 	public void findComments(List<String> tokens, File file, String s) {
+		comments.clear();
+		commentLines.clear();
+		commentMatches.clear();
 		String text = s;
 
 		Pattern commentsPattern = Pattern.compile("(//.*?$)|(/\\*.*?\\*/)", Pattern.MULTILINE | Pattern.DOTALL);

@@ -71,6 +71,9 @@ public class TaskListView implements PidescoView {
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
 		instance = this;
+		tags.clear();
+		tasklist.clear();
+		taskList.clear();
 		TaskListActivator.getInstance().getEditor().addListener(new JavaEditorListener() {
 
 			@Override
@@ -287,16 +290,22 @@ public class TaskListView implements PidescoView {
 		TaskManager taskManager = new TaskManager();
 		
 		List<String> tokens = new ArrayList<String>();
-		tokens.add("TODO");
-		tokens.add("FIXME");
-		tokens.add("BUG");
+		for (String t : tags) {
+			tokens.add(t);
+		}
+//		tokens.add("TODO");
+//		tokens.add("FIXME");
+//		tokens.add("XXX");
 
 		try (BufferedReader buffer = new BufferedReader(new FileReader(file))) {
 			String line;
 			StringBuilder sb = new StringBuilder();
 
 			System.out.println(file.getName());
+			System.out.println(file.getParentFile().getName());
 
+			
+			
 			int count = 0;
 			while ((line = buffer.readLine()) != null) {
 
