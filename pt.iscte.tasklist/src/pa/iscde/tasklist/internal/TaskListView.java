@@ -240,7 +240,7 @@ public class TaskListView implements PidescoView {
 		table.setLayoutData(data);
 		
 		
-		String[] titles = { "Description", "Project", "File", "Line" };
+		String[] titles = { "Description", "Resource", "Path", "Location"};
 		for (int i = 0; i < titles.length; i++) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
 			column.setText(titles[i]);
@@ -334,19 +334,20 @@ public class TaskListView implements PidescoView {
 	 * @param map of Tasks
 	 */
 	private void saveDataInTable(Map<String, Set<Task>> map) {
-
+		
 		for (Set<Task> s : map.values())
 			for (Task t : s) {
 				TableItem item = new TableItem(table, SWT.NONE);
 				item.setText(0, t.getToken().toString() + t.getDescription());
-				item.setText(1, "Project: " + t.getProject());
-				item.setText(2, t.getFile());
-				item.setText(3, "Line " + t.getLine());
+				item.setText(1, t.getFile());
+				item.setText(2, t.getProject());
+				item.setText(3, "line " + t.getLine());
 			}
 
 		for (TableColumn column : table.getColumns()) {
 			column.pack();
 		}
+		
 	}
 
 	
