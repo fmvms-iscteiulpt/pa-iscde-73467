@@ -8,22 +8,20 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TaskManager {
+public class TaskHandler {
 
 	static class Match {
 		int start;
 		String text;
 	}
-
+	
+	private Set<Task> tasks = new HashSet<Task>();
 	static List<Match> commentMatches = new ArrayList<Match>();
-
 	static List<Integer> commentLines = new ArrayList<Integer>();
-
 	static List<String> comments = new ArrayList<String>();
 
 	/**
 	 *  Get the document line number of a given string
-	 *  https://stackoverflow.com/questions/7871007/get-line-number-within-matcher-find-using-matcher-start/26314471
 	 * @param data 
 	 * @param start
 	 * @return
@@ -39,17 +37,14 @@ public class TaskManager {
 		return (line);
 	}
 
-	private Set<Task> tasks = new HashSet<Task>();
 
 	/**
 	 * Find strings with the given tokens
-	 * https://inneka.com/programming/java/how-to-find-a-whole-word-in-a-string-in-java/
 	 * @param tokens List of tokens
 	 * @param text   filtered comment String
 	 * @return All text after the token
 	 */
 	public String extractTokens(List<String> tokens, String text) {
-
 		String value = "";
 		String patternString = "\\b(" + String.join("|", tokens) + ")\\b";
 		Pattern pattern = Pattern.compile(patternString);
@@ -65,7 +60,6 @@ public class TaskManager {
 
 	/**
 	 * Filter strings with comments
-	 * https://stackoverflow.com/questions/1657066/java-regular-expression-finding-comments-in-code/1740692
 	 */
 	public void findComments(List<String> tokens, File file, String s) {
 		comments.clear();

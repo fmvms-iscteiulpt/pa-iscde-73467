@@ -1,6 +1,9 @@
 package pa.iscde.tasklist.internal;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+
 import pa.iscde.tasklist.service.TaskListService;
 
 
@@ -10,8 +13,8 @@ public class TaskListServiceImpl implements TaskListService {
 
 //	Getter for all tasks found
 	@Override
-	public ArrayList<Task> getTasks() {
-		ArrayList<Task> tasksMap = TaskListView.getInstance().getTaskList();		
+	public Map<String, Set<Task>> getTasks() {
+		Map<String, Set<Task>> tasksMap = TaskListView.getInstance().getTaskList();		
 		return tasksMap;
 	}
 

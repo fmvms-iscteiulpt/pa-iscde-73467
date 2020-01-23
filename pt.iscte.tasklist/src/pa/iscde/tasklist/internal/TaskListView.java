@@ -61,21 +61,21 @@ public class TaskListView implements PidescoView {
 
 	private static TaskListView instance;
 	private static final String EXT_POINT_TASK = "pt.iscte.tasklist.taskextension";
-	//	arraylist containing the tasks
-	private ArrayList<Task> tasklist = new ArrayList<Task>();
+	//	map containing the list of tasks
+	private Map<String, Set<Task>> taskList = new HashMap<String, Set<Task>>();
+//	private ArrayList<Task> tasklist = new ArrayList<Task>();
 	Table table;
 	//	arraylist containing the tags names 
 	private ArrayList<String> tags = new ArrayList<String>();
 	private String[] defaultTags= {"TODO", "FIXME", "XXX"};
 	private String root;
-	private Map<String, Set<Task>> taskList = new HashMap<String, Set<Task>>();
 
 	
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
 		instance = this;
 		tags.clear();
-		tasklist.clear();
+//		tasklist.clear();
 		taskList.clear();
 		TaskListActivator.getInstance().getEditor().addListener(new JavaEditorListener() {
 
@@ -222,13 +222,13 @@ public class TaskListView implements PidescoView {
 				.getServiceReference(ProjectBrowserServices.class);
 		ProjectBrowserServices projServ = context.getService(serviceReference);
 
-		projServ.addListener(new ProjectBrowserListener.Adapter() {
-			@Override
-			public void doubleClick(SourceElement element) {
-				new Label(viewArea, SWT.NONE).setText(element.getName());
-				viewArea.layout();
-			}
-		});
+//		projServ.addListener(new ProjectBrowserListener.Adapter() {
+//			@Override
+//			public void doubleClick(SourceElement element) {
+//				new Label(viewArea, SWT.NONE).setText(element.getName());
+//				viewArea.layout();
+//			}
+//		});
 		
 		
 	
@@ -299,7 +299,7 @@ public class TaskListView implements PidescoView {
 			}
 		})) {
 			if (f.isFile()) {
-				updateTableView(f);
+				updateTable(f);
 			}else {
 				fileReader(f);
 			}
@@ -308,59 +308,50 @@ public class TaskListView implements PidescoView {
 	
 	
 	/**
-	 * Updates the Java Tasks Table view
+	 * Updates the Tasks Table in the view
 	 * 
 	 * @param file
 	 */
-	public void updateTableView(File file) {
-
-		TaskManager taskManager = new TaskManager();
+	public void updateTable(File file) {
 		
 		List<String> tokens = new ArrayList<String>();
 		for (String t : tags) {
 			tokens.add(t);
 		}
-//		tokens.add("TODO");
-//		tokens.add("FIXME");
-//		tokens.add("XXX");
 
+		TaskHandler taskHandler = new TaskHandler();
+		
 		try (BufferedReader buffer = new BufferedReader(new FileReader(file))) {
+			System.out.println(file.getName());
+			System.out.println(file.getParentFile().getName());
+			
 			String line;
 			StringBuilder sb = new StringBuilder();
 
-			System.out.println(file.getName());
-			System.out.println(file.getParentFile().getName());
-
-			
-			
-			int count = 0;
 			while ((line = buffer.readLine()) != null) {
-
 				sb.append(line);
 				sb.append(System.lineSeparator());
-				count++;
 			}
-		
 			String everything = sb.toString();
-			taskManager.findComments(tokens, file, everything);
+			taskHandler.findComments(tokens, file, everything);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		taskList.put(file.getPath(), taskManager.getTasks());
+		taskList.put(file.getPath(), taskHandler.getTasks());
 		table.removeAll();
-		saveDataInTable(taskList);
+		storeTasksInTable(taskList);
 		table.redraw();
 
 	}
 
 	/**
-	 * Stores the Tasks on the table view
+	 * Inserts the Tasks on the table view
 	 * 
 	 * @param map of Tasks
 	 */
-	private void saveDataInTable(Map<String, Set<Task>> map) {
+	private void storeTasksInTable(Map<String, Set<Task>> map) {
 		
 		for (Set<Task> s : map.values())
 			for (Task t : s) {
@@ -377,15 +368,12 @@ public class TaskListView implements PidescoView {
 		
 	}
 
-	
-	
-	
 	public static TaskListView getInstance() {
 		return instance;
 	}
 	
-	public ArrayList<Task> getTaskList() {
-		return tasklist;
+	public Map<String, Set<Task>> getTaskList() {
+		return taskList;
 	}
 	
 }
