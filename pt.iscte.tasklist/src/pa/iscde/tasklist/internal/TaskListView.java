@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -46,6 +48,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+
 
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
@@ -238,7 +241,31 @@ public class TaskListView implements PidescoView {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 200;
 		table.setLayoutData(data);
-		
+		table.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseUp(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseDown(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				System.out.println("clicked table!");
+				TableItem[] selection = table.getSelection();
+				for (TableItem i : selection) {
+					Task t = new Task(i.getText(0), i.getText(1), i.getText(2), i.getText(3),3);
+					TaskListActivator.getInstance().getEditor().openFile(new File(t.getProject()));
+				}
+					
+			}
+		});
 		
 		String[] titles = { "Description", "Resource", "Path", "Location"};
 		for (int i = 0; i < titles.length; i++) {
