@@ -69,6 +69,8 @@ public class TaskListView implements PidescoView {
 	private ArrayList<String> tags = new ArrayList<String>();
 	private String[] defaultTags= {"TODO", "FIXME", "XXX"};
 	private String root;
+	List<String> tokens = new ArrayList<String>();
+
 
 	
 	@Override
@@ -95,6 +97,8 @@ public class TaskListView implements PidescoView {
 			}
 		});
 		
+		
+		
 		viewArea.setLayout(new RowLayout(SWT.VERTICAL));
 		
 		// task description
@@ -119,9 +123,7 @@ public class TaskListView implements PidescoView {
 		Label tagName = new Label(viewArea, SWT.ABORT);		
 		tagName.setText("Please choose one tag for your task: ");	
 
-		Composite comp = new Composite(viewArea, SWT.NONE);
-		comp.setLayout(new GridLayout(4, false));
-		comp.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
+		
 			
 		// implementing extensions
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
@@ -151,20 +153,56 @@ public class TaskListView implements PidescoView {
 			tags.add(s);
 		}
 
+		for (String t : tags) {
+			tokens.add(t);
+		}
+		
+		Composite comp = new Composite(viewArea, SWT.NONE);
+		comp.setLayout(new GridLayout(tags.size()+1, false));
+		comp.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
+		
 		//	create the buttons for the tags in the array list tags
 		//	save the buttons created in an buttons array list: listbuttons 
-		ArrayList<Button> listbuttons = new ArrayList<Button>();
+//		ArrayList<Button> listbuttons = new ArrayList<Button>();
+//		for(String t : tags) {
+//			Button b = new Button(comp, SWT.CHECK);
+//			listbuttons.add(b);
+//			b.setText(t);
+//			b.addSelectionListener(selectionListener);
+//		}
+		
+		//create buttons to only show tasks with tags
+		Button b = new Button(comp, SWT.PUSH);
+		b.setText("ALL");
+		b.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				tokens.clear();
+				for (String t : tags) {
+					tokens.add(t);
+				}
+				fileReader(new File(root));
+			}
+		});
+		
 		for(String t : tags) {
-			Button b = new Button(comp, SWT.CHECK);
-			listbuttons.add(b);
-			b.setText(t);
-			b.addSelectionListener(selectionListener);
+			Button bt = new Button(comp, SWT.PUSH);
+			bt.setText(t);
+			bt.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					tokens.clear();
+					tokens.add(t);
+					fileReader(new File(root));
+				}
+			});
 		}
 		
 		//	handle the button to create a task
 		Button pushButton = new Button(viewArea, SWT.PUSH);
 		pushButton.setLocation(50, 50);
-		pushButton.setText("Create new Task!");
+		pushButton.setText("Refresh Table");
 		pushButton.pack();
 		pushButton.addListener(SWT.Selection, new Listener() {
 			
@@ -173,10 +211,12 @@ public class TaskListView implements PidescoView {
 				
 				//	if no tag choosen it will be NA
 				//	when the button is pressed it will look for the tag choosen, if more than one it will choose the one to the right
-				String tag = new String("NA");
-				for (Button b : listbuttons) {
-					if(b.getSelection()) tag = b.getText();
-				}
+//				String tag = new String("NA");
+//				for (Button b : listbuttons) {
+//					if(b.getSelection()) tag = b.getText();
+//				}
+				
+				fileReader(new File(root));
 				
 				// create the task with the arguments of the view
 //				Task task = new Task(tag,nameClass.getText(),nameLocation.getText());
@@ -232,7 +272,7 @@ public class TaskListView implements PidescoView {
 		
 		
 	
-		
+
 		
 		viewArea.setLayout(new GridLayout());
 		table = new Table(viewArea, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
@@ -299,7 +339,7 @@ public class TaskListView implements PidescoView {
 			}
 		})) {
 			if (f.isFile()) {
-				updateTable(f);
+				updateTable(f, tokens);
 			}else {
 				fileReader(f);
 			}
@@ -312,12 +352,9 @@ public class TaskListView implements PidescoView {
 	 * 
 	 * @param file
 	 */
-	public void updateTable(File file) {
+	public void updateTable(File file, List<String> tokens) {
 		
-		List<String> tokens = new ArrayList<String>();
-		for (String t : tags) {
-			tokens.add(t);
-		}
+		
 
 		TaskHandler taskHandler = new TaskHandler();
 		
