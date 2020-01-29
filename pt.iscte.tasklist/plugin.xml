@@ -14,8 +14,28 @@
    <extension
          point="pt.iscte.tasklist.taskextension">
       <tasktag
-            tagdescription="testedescription"
-            tagname="URGENTE">
+            tagdescription="Fix fast"
+            tagname="URGENT">
+      </tasktag>
+      <tasktag
+            tagdescription="This is important code"
+            tagname="IMPORTANT">
+      </tasktag>
+      <tasktag
+            tagdescription="Needs to be refactored"
+            tagname="CLEAN">
+      </tasktag>
+      <tasktag
+            tagdescription="Tasks to do"
+            tagname="TODO">
+      </tasktag>
+      <tasktag
+            tagdescription="Fix this code"
+            tagname="FIXME">
+      </tasktag>
+      <tasktag
+            tagdescription="Needs attention"
+            tagname="XXX">
       </tasktag>
    </extension>
 

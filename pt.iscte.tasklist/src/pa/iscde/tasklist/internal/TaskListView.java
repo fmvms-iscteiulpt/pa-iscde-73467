@@ -67,6 +67,7 @@ public class TaskListView implements PidescoView {
 	Table table;
 	//	arraylist containing the tags names 
 	private ArrayList<String> tags = new ArrayList<String>();
+	private ArrayList<String> tagdescription = new ArrayList<String>();
 	private String[] defaultTags= {"TODO", "FIXME", "XXX"};
 	private String root;
 	List<String> tokens = new ArrayList<String>();
@@ -77,6 +78,7 @@ public class TaskListView implements PidescoView {
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
 		instance = this;
 		tags.clear();
+		tagdescription.clear();
 //		tasklist.clear();
 		taskList.clear();
 		TaskListActivator.getInstance().getEditor().addListener(new JavaEditorListener() {
@@ -98,30 +100,9 @@ public class TaskListView implements PidescoView {
 		});
 		
 		
-		
-		viewArea.setLayout(new RowLayout(SWT.VERTICAL));
-		
-		// task description
-		Label labelName = new Label(viewArea, SWT.ABORT);		
-		labelName.setText("Give a description to your task: ");	
-
-		Text nameClass = new Text(viewArea,SWT.BORDER);		
-		nameClass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
-		nameClass.setToolTipText("Write your task description");
-		nameClass.setEditable(true);
-
-		// task location
-		Label labelLocation = new Label(viewArea, SWT.ABORT);
-		labelLocation.setText("Where is your task located?");
-		
-		Text nameLocation = new Text(viewArea,SWT.BORDER);		
-		nameLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
-		nameLocation.setToolTipText("Write your task location");
-		nameLocation.setEditable(true);
-		
 		// task tag 
 		Label tagName = new Label(viewArea, SWT.ABORT);		
-		tagName.setText("Please choose one tag for your task: ");	
+		tagName.setText("Select which tasks appear in the table");	
 
 		
 			
@@ -133,7 +114,8 @@ public class TaskListView implements PidescoView {
 			IConfigurationElement[] confElements = e.getConfigurationElements();
 			for(IConfigurationElement c : confElements) {
 				//	add a new tag to the tags arraylist with the name given in the extension argument "tagname"
-				tags.add(c.getAttribute("tagname"));				
+				tags.add(c.getAttribute("tagname"));
+				tagdescription.add(c.getAttribute("tagdescription"));
 			}
 		}
 		
@@ -149,9 +131,9 @@ public class TaskListView implements PidescoView {
 		};
 
 		//	add the default tags to the array list tags
-		for (String s : defaultTags) {
-			tags.add(s);
-		}
+//		for (String s : defaultTags) {
+//			tags.add(s);
+//		}
 
 		for (String t : tags) {
 			tokens.add(t);
@@ -185,10 +167,12 @@ public class TaskListView implements PidescoView {
 				fileReader(new File(root));
 			}
 		});
-		
+		int count =0;
 		for(String t : tags) {
 			Button bt = new Button(comp, SWT.PUSH);
 			bt.setText(t);
+			bt.setToolTipText(tagdescription.get(count));
+			count++;
 			bt.addListener(SWT.Selection, new Listener() {
 				@Override
 				public void handleEvent(Event event) {
