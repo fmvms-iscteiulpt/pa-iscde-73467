@@ -59,30 +59,30 @@ import pt.iscte.pidesco.projectbrowser.model.SourceElement;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserListener;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
 
+/**
+ * View implemented by PidescoView showing the tasklist 
+ * @author franc
+ *
+ */
 
 public class TaskListView implements PidescoView {
 
 	private static TaskListView instance;
 	private static final String EXT_POINT_TASK = "pt.iscte.tasklist.taskextension";
-	//	map containing the list of tasks
 	private Map<String, Set<Task>> taskList = new HashMap<String, Set<Task>>();
-//	private ArrayList<Task> tasklist = new ArrayList<Task>();
-	Table table;
-	//	arraylist containing the tags names 
-	private ArrayList<String> taglist = new ArrayList<String>();
-	private ArrayList<String> tagdescription = new ArrayList<String>();
+	private Table table;
+	private ArrayList<String> tagList = new ArrayList<String>();
+	private ArrayList<String> tagDescription = new ArrayList<String>();
 	private String root;
-	List<String> tags = new ArrayList<String>();
+	private List<String> tagsSelected = new ArrayList<String>();
+	private String[] tableColumns = { "Description", "Resource", "Path", "Location"};
 
-
-	
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
 		instance = this;
-		tags.clear();
-		tagdescription.clear();
-		taglist.clear();
-//		tasklist.clear();
+		tagsSelected.clear();
+		tagDescription.clear();
+		tagList.clear();
 		taskList.clear();
 		ProjectBrowserServices browserService = TaskListActivator.getInstance().getBrowser();
 		JavaEditorServices editorService = TaskListActivator.getInstance().getEditor();
@@ -105,162 +105,75 @@ public class TaskListView implements PidescoView {
 			public void selectionChanged(File file, String text, int offset, int length) {
 
 			}
-		});
-		
-		// task tag 
-		Label tagName = new Label(viewArea, SWT.ABORT);		
-		tagName.setText("Select which tasks appear in the table");	
+		});	
 
-		
-			
-		// implementing extensions
+		// Implementing extensions
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = extRegistry.getExtensionPoint(EXT_POINT_TASK);
 		IExtension[] extensions = extensionPoint.getExtensions();
 		for(IExtension e : extensions) {
 			IConfigurationElement[] confElements = e.getConfigurationElements();
 			for(IConfigurationElement c : confElements) {
-				//	add a new tag to the tags arraylist with the name given in the extension argument "tagname"
-				taglist.add(c.getAttribute("tagname"));
-				tagdescription.add(c.getAttribute("tagdescription"));
+				//	add a new tag to tagList with the text given in the extension argument "tagname"
+				tagList.add(c.getAttribute("tagname"));
+				//	add a new tag description to tagDescription with the text given in the extension argument "tagdescription"
+				tagDescription.add(c.getAttribute("tagdescription"));
 			}
 		}
 		
-		// handle the tags button selection
-		SelectionListener selectionListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				Button button = ((Button) e.widget);
-				if(button.getSelection()) {
-					button.setSelection(true); 
-				} else { button.setSelection(false);
-				}
-			}
-		};
-
-		//	add the default tags to the array list tags
-//		for (String s : defaultTags) {
-//			tags.add(s);
-//		}
-
-		for (String t : taglist) {
-			tags.add(t);
-		}
+		for (String t : tagList) { tagsSelected.add(t);}
+		
+		Label tagName = new Label(viewArea, SWT.ABORT);		
+		tagName.setText("Select which tasks appear in the table");	
 		
 		Composite comp = new Composite(viewArea, SWT.NONE);
-		comp.setLayout(new GridLayout(taglist.size()+1, false));
+		comp.setLayout(new GridLayout(tagList.size()+1, false));
 		comp.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
-		
-		//	create the buttons for the tags in the array list tags
-		//	save the buttons created in an buttons array list: listbuttons 
-//		ArrayList<Button> listbuttons = new ArrayList<Button>();
-//		for(String t : tags) {
-//			Button b = new Button(comp, SWT.CHECK);
-//			listbuttons.add(b);
-//			b.setText(t);
-//			b.addSelectionListener(selectionListener);
-//		}
-		
-		//create buttons to only show tasks with tags
+				
+		// Create buttons to only show tasks with selected tags
 		Button b = new Button(comp, SWT.PUSH);
 		b.setText("ALL");
+		b.pack();
 		b.addListener(SWT.Selection, new Listener() {
-
 			@Override
 			public void handleEvent(Event event) {
-				tags.clear();
-				for (String t : taglist) {
-					tags.add(t);
+				tagsSelected.clear();
+				for (String t : tagList) {
+					tagsSelected.add(t);
 				}
 				fileReader(new File(root));
 			}
 		});
-		int count =0;
-		for(String t : taglist) {
+		int count = 0;
+		for(String t : tagList) {
 			Button bt = new Button(comp, SWT.PUSH);
 			bt.setText(t);
-			bt.setToolTipText(tagdescription.get(count));
+			bt.setToolTipText(tagDescription.get(count));
 			count++;
+			bt.pack();
 			bt.addListener(SWT.Selection, new Listener() {
 				@Override
 				public void handleEvent(Event event) {
-					tags.clear();
-					tags.add(t);
+					tagsSelected.clear();
+					tagsSelected.add(t);
 					fileReader(new File(root));
 				}
 			});
 		}
 		
-		//	handle the button to create a task
+		//	Create a button to refresh the table, looking for new tasks in the files
 		Button pushButton = new Button(viewArea, SWT.PUSH);
 		pushButton.setLocation(50, 50);
 		pushButton.setText("Refresh Table");
 		pushButton.pack();
 		pushButton.addListener(SWT.Selection, new Listener() {
-			
 			@Override
 			public void handleEvent(Event event) {	
-				
-				//	if no tag choosen it will be NA
-				//	when the button is pressed it will look for the tag choosen, if more than one it will choose the one to the right
-//				String tag = new String("NA");
-//				for (Button b : listbuttons) {
-//					if(b.getSelection()) tag = b.getText();
-//				}
-				
 				fileReader(new File(root));
-				
-				// create the task with the arguments of the view
-//				Task task = new Task(tag,nameClass.getText(),nameLocation.getText());
-//				tasklist.add(task);
-//
-//				table.removeAll();
-//				table.redraw();
-//	
-//				//	populate the table with the new task
-//				for (Task t : tasklist) {
-//						TableItem item = new TableItem(table, SWT.NONE);
-//						item.setText(0, t.getTag());
-//						item.setText(1, t.getDescription());
-//						item.setText(2, t.getLocation());
-//				}			
-//				for (int i = 0; i < 3; i++) {
-//					table.getColumn(i).pack();
-//				}
-				System.out.println(root);
 			}
 		});
 		
-//		viewArea.setLayout(new GridLayout());
-//		table = new Table(viewArea, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
-//		table.setLinesVisible(true);
-//		table.setHeaderVisible(true);
-//		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-//		data.heightHint = 200;
-//		table.setLayoutData(data);
-//		String[] titles = { "Tag", "Description", "Location" };
-//		for (int i = 0; i < titles.length; i++) {
-//			TableColumn column = new TableColumn(table, SWT.NONE);
-//			column.setText(titles[i]);
-//		}
-//		for (int i = 0; i < titles.length; i++) {
-//			table.getColumn(i).pack();
-//		}
-		
-		/////started doing 2 development
-		
-		ProjectBrowserServices projServ = TaskListActivator.getInstance().getBrowser();
-//		projServ.addListener(new ProjectBrowserListener.Adapter() {
-//			@Override
-//			public void doubleClick(SourceElement element) {
-//				new Label(viewArea, SWT.NONE).setText(element.getName());
-//				viewArea.layout();
-//			}
-//		});
-		
-		
-	
-
-		
+		// Table implementation
 		viewArea.setLayout(new GridLayout());
 		table = new Table(viewArea, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
 		table.setLinesVisible(true);
@@ -282,36 +195,35 @@ public class TaskListView implements PidescoView {
 
 			}
 
+			// opens the file containing the clicked task of the table
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				System.out.println("clicked table!");
 				TableItem[] selection = table.getSelection();
 				for (TableItem i : selection) {
 					Task t = new Task(i.getText(0), i.getText(1), i.getText(2), i.getText(3),3);
 					TaskListActivator.getInstance().getEditor().openFile(new File(t.getPath()));
 				}
-					
 			}
 		});
 		
-		String[] titles = { "Description", "Resource", "Path", "Location"};
-		for (int i = 0; i < titles.length; i++) {
+		// creates the table columns
+		for (int i = 0; i < tableColumns.length; i++) {
 			TableColumn column = new TableColumn(table, SWT.NONE);
-			column.setText(titles[i]);
-		}
-
-		for (int i = 0; i < titles.length; i++) {
+			column.setText(tableColumns[i]);
 			table.getColumn(i).pack();
 		}
-		
-		root = projServ.getRootPackage().getFile().getPath();
+
+		// gets the root path through the browserService
+		root = browserService.getRootPackage().getFile().getPath();
 		fileReader(new File(root));
-		
 	}
 	
 	
-	
-	private void fileReader(File file) {
+	/**
+	 * Reads the file in the parameter and if it is a directory then it moves up until it reads all the files
+	 * @param file
+	 */
+	public void fileReader(File file) {
 		for (File f : file.listFiles(new FileFilter() {
 			
 			@Override
@@ -326,56 +238,47 @@ public class TaskListView implements PidescoView {
 			}
 		})) {
 			if (f.isFile()) {
-				updateTable(f, tags);
+				lookForTasks(f, tagsSelected);
 			}else {
 				fileReader(f);
 			}
 		}
 	}
 	
-	
 	/**
-	 * Updates the Tasks Table in the view
-	 * 
+	 * Looks for tasks in the file, with the current selected tags and adds them to the taskList
 	 * @param file
+	 * @param tagsSelected
 	 */
-	public void updateTable(File file, List<String> tags) {
+	public void lookForTasks(File file, List<String> tagsSelected) {
 		
-		
-
 		TaskHandler taskHandler = new TaskHandler();
 		
 		try (BufferedReader buffer = new BufferedReader(new FileReader(file))) {
-			System.out.println(file.getName());
-			System.out.println(file.getParentFile().getName());
-			
 			String line;
 			StringBuilder sb = new StringBuilder();
-
 			while ((line = buffer.readLine()) != null) {
 				sb.append(line);
 				sb.append(System.lineSeparator());
 			}
 			String everything = sb.toString();
-			taskHandler.createTasks(tags, file, everything);
-
+			taskHandler.createTasks(tagsSelected, file, everything);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		taskList.put(file.getPath(), taskHandler.getTasks());
 		table.removeAll();
-		storeTasksInTable(taskList);
+		populateTable(taskList);
 		table.redraw();
 
 	}
 
 	/**
 	 * Inserts the Tasks on the table view
-	 * 
-	 * @param map of Tasks
+	 * @param map of the tasks
 	 */
-	private void storeTasksInTable(Map<String, Set<Task>> map) {
+	private void populateTable(Map<String, Set<Task>> map) {
 		
 		for (Set<Task> s : map.values())
 			for (Task t : s) {
@@ -392,10 +295,18 @@ public class TaskListView implements PidescoView {
 		
 	}
 
+	/**
+	 * Returns the TaskListView instance
+	 * @return TaskListView instance
+	 */
 	public static TaskListView getInstance() {
 		return instance;
 	}
 	
+	/**
+	 * Returns the taskList containing the tasks
+	 * @return Map taskList
+	 */
 	public Map<String, Set<Task>> getTaskList() {
 		return taskList;
 	}

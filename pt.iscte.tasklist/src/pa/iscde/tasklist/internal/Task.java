@@ -1,7 +1,9 @@
 package pa.iscde.tasklist.internal;
 
 /**
- *  Object that represents a Task 
+ * Object that represents a Task 
+ * @author franc
+ *
  */
 
 public class Task {

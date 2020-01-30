@@ -6,13 +6,17 @@ import java.util.Set;
 
 import pa.iscde.tasklist.internal.Task;
 
+/**
+ * Task List Services
+ * @author franc
+ *
+ */
 
 public interface TaskListService {
 	
 	/**
-	 * Getter for an ArrayList of Task Objects for all the taks currently in the table
-	 *
-	 * @return ArrayList of Task Objects
+	 * Returns a Map of Task Objects for all the tasks currently in the table
+	 * @return Map of Task Objects
 	 */
 	Map<String, Set<Task>> getTasks();
 	

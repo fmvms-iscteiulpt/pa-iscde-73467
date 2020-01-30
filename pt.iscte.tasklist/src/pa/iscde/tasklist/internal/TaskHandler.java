@@ -9,7 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *  Manages the creation of tasks
+ * Manages the creation of tasks
+ * @author franc
+ *
  */
 
 public class TaskHandler {
@@ -105,7 +107,6 @@ public class TaskHandler {
 		Matcher matcher = pattern.matcher(text);
 		while (matcher.find()) {
 			value = matcher.group(1);
-			System.out.println(value);
 		}
 		return value;
 	}

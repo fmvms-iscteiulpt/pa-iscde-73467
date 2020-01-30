@@ -11,7 +11,9 @@ import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
 
 /**
- *  Task list Activator
+ * Task list Activator
+ * @author franc
+ *
  */
 
 public class TaskListActivator implements BundleActivator {

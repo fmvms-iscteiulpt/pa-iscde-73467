@@ -6,12 +6,18 @@ import java.util.Set;
 
 import pa.iscde.tasklist.service.TaskListService;
 
-
-//	TaskList Services Implementation
+/**
+ * TaskList Services Implementation
+ * @author franc
+ *
+ */
 
 public class TaskListServiceImpl implements TaskListService {
 
-//	Getter for all tasks found
+	/**
+	 * Returns all the tasks found
+	 * @return Map taskMap with all the tasks found
+	 */
 	@Override
 	public Map<String, Set<Task>> getTasks() {
 		Map<String, Set<Task>> tasksMap = TaskListView.getInstance().getTaskList();		
