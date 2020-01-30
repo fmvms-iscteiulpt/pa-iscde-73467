@@ -48,10 +48,13 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 
-
+import pa.iscde.tasklist.service.TaskListService;
+import pt.iscte.pidesco.extensibility.PidescoServices;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
+import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.model.SourceElement;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserListener;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
@@ -81,7 +84,12 @@ public class TaskListView implements PidescoView {
 		taglist.clear();
 //		tasklist.clear();
 		taskList.clear();
-		TaskListActivator.getInstance().getEditor().addListener(new JavaEditorListener() {
+		ProjectBrowserServices browserService = TaskListActivator.getInstance().getBrowser();
+		JavaEditorServices editorService = TaskListActivator.getInstance().getEditor();
+		PidescoServices pidescoService = TaskListActivator.getInstance().getPidesco();
+		ServiceRegistration<TaskListService> taskListService = TaskListActivator.getInstance().getTaskService();
+		
+		editorService.addListener(new JavaEditorListener() {
 
 			@Override
 			public void fileOpened(File file) {
@@ -98,7 +106,6 @@ public class TaskListView implements PidescoView {
 
 			}
 		});
-		
 		
 		// task tag 
 		Label tagName = new Label(viewArea, SWT.ABORT);		
@@ -241,11 +248,7 @@ public class TaskListView implements PidescoView {
 		
 		/////started doing 2 development
 		
-		BundleContext context = TaskListActivator.getContext();
-		ServiceReference<ProjectBrowserServices> serviceReference = context
-				.getServiceReference(ProjectBrowserServices.class);
-		ProjectBrowserServices projServ = context.getService(serviceReference);
-
+		ProjectBrowserServices projServ = TaskListActivator.getInstance().getBrowser();
 //		projServ.addListener(new ProjectBrowserListener.Adapter() {
 //			@Override
 //			public void doubleClick(SourceElement element) {

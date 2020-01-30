@@ -10,14 +10,18 @@ import pt.iscte.pidesco.extensibility.PidescoServices;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.projectbrowser.service.ProjectBrowserServices;
 
+/**
+ *  Task list Activator
+ */
+
 public class TaskListActivator implements BundleActivator {
 
 	private static TaskListActivator instance;
 	private static BundleContext context;
-	private JavaEditorServices editor;
-	private ProjectBrowserServices browser;
-	private ServiceRegistration<TaskListService> task;
-	private PidescoServices pidesco;
+	private JavaEditorServices editorService;
+	private ProjectBrowserServices browserService;
+	private ServiceRegistration<TaskListService> taskService;
+	private PidescoServices pidescoService;
 
 	public static BundleContext getContext() {
 		return context;
@@ -29,10 +33,10 @@ public class TaskListActivator implements BundleActivator {
 		ServiceReference<ProjectBrowserServices> browserReference = context.getServiceReference(ProjectBrowserServices.class);
 		ServiceReference<JavaEditorServices> editorReference = context.getServiceReference(JavaEditorServices.class);
 		ServiceReference<PidescoServices> pidescoReference = context.getServiceReference(PidescoServices.class);
-		task = context.registerService(TaskListService.class, new TaskListServiceImpl(), null);
-		browser = context.getService(browserReference);
-		editor = context.getService(editorReference);
-		pidesco = context.getService(pidescoReference);
+		taskService = context.registerService(TaskListService.class, new TaskListServiceImpl(), null);
+		browserService = context.getService(browserReference);
+		editorService = context.getService(editorReference);
+		pidescoService = context.getService(pidescoReference);
 		instance = this;
 	}
 
@@ -42,32 +46,44 @@ public class TaskListActivator implements BundleActivator {
 		TaskListActivator.context = null;
 	}
 
+	/**
+	 * Returns the task list activator instance
+	 * @return TaskListActivator instance
+	 */
 	public static TaskListActivator getInstance() {
 		return instance;
 	}
 	
 	/**
-	 * Getter for browser Service
-	 * @return ProjectBrowserServices instance
+	 * Returns the Browser Service
+	 * @return ProjectBrowserServices browserService
 	 */
 	public ProjectBrowserServices getBrowser() {
-		return browser;
+		return browserService;
 	}
 
 	/**
-	 * Getter for editor Service
-	 * @return JavaEditorServices instance
+	 * Returns the Java Editor Service
+	 * @return JavaEditorServices editorService
 	 */
 	public JavaEditorServices getEditor() {
-		return editor;
+		return editorService;
 	}
 
 	/**
-	 * Getter for pidesco Service
-	 * @return PidescoServices instance
+	 * Returns the Pidesco Service
+	 * @return PidescoServices pidescoService
 	 */
 	public PidescoServices getPidesco() {
-		return pidesco;
+		return pidescoService;
+	}
+	
+	/**
+	 * Returns the Task List Service
+	 * @return TaskListService taskService
+	 */
+	public ServiceRegistration<TaskListService> getTaskService() {
+		return taskService;
 	}
 
 }
