@@ -66,11 +66,10 @@ public class TaskListView implements PidescoView {
 //	private ArrayList<Task> tasklist = new ArrayList<Task>();
 	Table table;
 	//	arraylist containing the tags names 
-	private ArrayList<String> tags = new ArrayList<String>();
+	private ArrayList<String> taglist = new ArrayList<String>();
 	private ArrayList<String> tagdescription = new ArrayList<String>();
-	private String[] defaultTags= {"TODO", "FIXME", "XXX"};
 	private String root;
-	List<String> tokens = new ArrayList<String>();
+	List<String> tags = new ArrayList<String>();
 
 
 	
@@ -79,6 +78,7 @@ public class TaskListView implements PidescoView {
 		instance = this;
 		tags.clear();
 		tagdescription.clear();
+		taglist.clear();
 //		tasklist.clear();
 		taskList.clear();
 		TaskListActivator.getInstance().getEditor().addListener(new JavaEditorListener() {
@@ -114,7 +114,7 @@ public class TaskListView implements PidescoView {
 			IConfigurationElement[] confElements = e.getConfigurationElements();
 			for(IConfigurationElement c : confElements) {
 				//	add a new tag to the tags arraylist with the name given in the extension argument "tagname"
-				tags.add(c.getAttribute("tagname"));
+				taglist.add(c.getAttribute("tagname"));
 				tagdescription.add(c.getAttribute("tagdescription"));
 			}
 		}
@@ -135,12 +135,12 @@ public class TaskListView implements PidescoView {
 //			tags.add(s);
 //		}
 
-		for (String t : tags) {
-			tokens.add(t);
+		for (String t : taglist) {
+			tags.add(t);
 		}
 		
 		Composite comp = new Composite(viewArea, SWT.NONE);
-		comp.setLayout(new GridLayout(tags.size()+1, false));
+		comp.setLayout(new GridLayout(taglist.size()+1, false));
 		comp.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
 		
 		//	create the buttons for the tags in the array list tags
@@ -160,15 +160,15 @@ public class TaskListView implements PidescoView {
 
 			@Override
 			public void handleEvent(Event event) {
-				tokens.clear();
-				for (String t : tags) {
-					tokens.add(t);
+				tags.clear();
+				for (String t : taglist) {
+					tags.add(t);
 				}
 				fileReader(new File(root));
 			}
 		});
 		int count =0;
-		for(String t : tags) {
+		for(String t : taglist) {
 			Button bt = new Button(comp, SWT.PUSH);
 			bt.setText(t);
 			bt.setToolTipText(tagdescription.get(count));
@@ -176,8 +176,8 @@ public class TaskListView implements PidescoView {
 			bt.addListener(SWT.Selection, new Listener() {
 				@Override
 				public void handleEvent(Event event) {
-					tokens.clear();
-					tokens.add(t);
+					tags.clear();
+					tags.add(t);
 					fileReader(new File(root));
 				}
 			});
@@ -285,7 +285,7 @@ public class TaskListView implements PidescoView {
 				TableItem[] selection = table.getSelection();
 				for (TableItem i : selection) {
 					Task t = new Task(i.getText(0), i.getText(1), i.getText(2), i.getText(3),3);
-					TaskListActivator.getInstance().getEditor().openFile(new File(t.getProject()));
+					TaskListActivator.getInstance().getEditor().openFile(new File(t.getPath()));
 				}
 					
 			}
@@ -323,7 +323,7 @@ public class TaskListView implements PidescoView {
 			}
 		})) {
 			if (f.isFile()) {
-				updateTable(f, tokens);
+				updateTable(f, tags);
 			}else {
 				fileReader(f);
 			}
@@ -336,7 +336,7 @@ public class TaskListView implements PidescoView {
 	 * 
 	 * @param file
 	 */
-	public void updateTable(File file, List<String> tokens) {
+	public void updateTable(File file, List<String> tags) {
 		
 		
 
@@ -354,7 +354,7 @@ public class TaskListView implements PidescoView {
 				sb.append(System.lineSeparator());
 			}
 			String everything = sb.toString();
-			taskHandler.findComments(tokens, file, everything);
+			taskHandler.createTasks(tags, file, everything);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -377,9 +377,9 @@ public class TaskListView implements PidescoView {
 		for (Set<Task> s : map.values())
 			for (Task t : s) {
 				TableItem item = new TableItem(table, SWT.NONE);
-				item.setText(0, t.getToken().toString() + t.getDescription());
-				item.setText(1, t.getFile());
-				item.setText(2, t.getProject());
+				item.setText(0, t.getTag().toString() + t.getDescription());
+				item.setText(1, t.getResource());
+				item.setText(2, t.getPath());
 				item.setText(3, "line " + t.getLine());
 			}
 

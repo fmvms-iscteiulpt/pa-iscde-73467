@@ -8,6 +8,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ *  Manages the creation of tasks
+ */
+
 public class TaskHandler {
 
 	static class Match {
@@ -15,53 +19,18 @@ public class TaskHandler {
 		String text;
 	}
 	
-	private Set<Task> tasks = new HashSet<Task>();
-	static List<Match> commentMatches = new ArrayList<Match>();
-	static List<Integer> commentLines = new ArrayList<Integer>();
 	static List<String> comments = new ArrayList<String>();
-
+	static List<Integer> commentLines = new ArrayList<Integer>();
+	static List<Match> commentMatches = new ArrayList<Match>();
+	private Set<Task> tasks = new HashSet<Task>();
+	
 	/**
-	 *  Get the document line number of a given string
-	 * @param data 
-	 * @param start
-	 * @return
+	 * Finds comments with tags and creates tasks
+	 * @param tags List of tags
+	 * @param file File we want to find comments
+	 * @param s String text
 	 */
-	static int getLine(String data, int start) {
-		int line = 1;
-		Pattern pattern = Pattern.compile("\n");
-		Matcher matcher = pattern.matcher(data);
-		matcher.region(0, start);
-		while (matcher.find()) {
-			line++;
-		}
-		return (line);
-	}
-
-
-	/**
-	 * Find strings with the given tokens
-	 * @param tokens List of tokens
-	 * @param text   filtered comment String
-	 * @return All text after the token
-	 */
-	public String extractTokens(List<String> tokens, String text) {
-		String value = "";
-		String patternString = "\\b(" + String.join("|", tokens) + ")\\b";
-		Pattern pattern = Pattern.compile(patternString);
-		Matcher matcher = pattern.matcher(text);
-
-		while (matcher.find()) {
-			value = matcher.group(1);
-			System.out.println(value);
-		}
-
-		return value;
-	}
-
-	/**
-	 * Filter strings with comments
-	 */
-	public void findComments(List<String> tokens, File file, String s) {
+	public void createTasks(List<String> tags, File file, String s) {
 		comments.clear();
 		commentLines.clear();
 		commentMatches.clear();
@@ -82,7 +51,6 @@ public class TaskHandler {
 		}
 
 		List<Match> commentsList = new ArrayList<Match>();
-
 		Matcher stringsMatcher = stringsPattern.matcher(text);
 		while (stringsMatcher.find()) {
 			for (Match comment : commentMatches) {
@@ -90,6 +58,7 @@ public class TaskHandler {
 					commentsList.add(comment);
 			}
 		}
+		
 		for (Match comment : commentsList)
 			commentMatches.remove(comment);
 
@@ -100,16 +69,49 @@ public class TaskHandler {
 		}
 
 		for (int i = 0; i < comments.size(); i++) {
-
-			if (extractTokens(tokens, comments.get(i)) != "") {
-
+			if (findTags(tags, comments.get(i)) != "") {
 				tasks.add(new Task("", comments.get(i), file.getAbsolutePath(), file.getName(), commentLines.get(i)));
 			}
 		}
 	}
+	
+	/**
+	 * Returns the line number of a given string
+	 * @param data 
+	 * @param start
+	 * @return Integer Line number of the string
+	 */
+	static int getLine(String data, int start) {
+		int line = 1;
+		Pattern pattern = Pattern.compile("\n");
+		Matcher matcher = pattern.matcher(data);
+		matcher.region(0, start);
+		while (matcher.find()) {
+			line++;
+		}
+		return (line);
+	}
 
 	/**
-	 * Getter for all the tasks found
+	 * Finds strings with the given tags
+	 * @param tags List of tags
+	 * @param text Comment String
+	 * @return String Text after the tag
+	 */
+	public String findTags(List<String> tags, String text) {
+		String value = "";
+		String patternString = "\\b(" + String.join("|", tags) + ")\\b";
+		Pattern pattern = Pattern.compile(patternString);
+		Matcher matcher = pattern.matcher(text);
+		while (matcher.find()) {
+			value = matcher.group(1);
+			System.out.println(value);
+		}
+		return value;
+	}
+	
+	/**
+	 * Returns all the tasks found
 	 * 
 	 * @return Set of Tasks
 	 */
