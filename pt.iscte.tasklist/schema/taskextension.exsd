@@ -6,7 +6,9 @@
          <meta.schema plugin="pt.iscte.tasklist" id="taskextension" name="Task Extension"/>
       </appinfo>
       <documentation>
-         Simply add the extension and then choose a &quot;tagname&quot; for the new tag you want to add to the TaskListView or Tasks (View).
+         The tasklist extension supports a view with a tasklist table that searches your workspace files for tasks, in other words, for comments with the tagnames you added in the extension. 
+Simply add the extension and then choose a &quot;tagname&quot; for the new tag you want to add to the TaskListView or Tasks (View) and you can also choose a &quot;tagdescription&quot; to add a tooltip text to describe the function of that same new tag.
+You can add multiple tags for your tasklist, simply right click on the tasklist extension and select new -&gt; tasktag.
       </documentation>
    </annotation>
 
